@@ -1,4 +1,4 @@
-__authors__ = ['1691333']
+__authors__ = ['1782649', '1745722', '1691333']
 __group__ = '10'
 
 import numpy as np
@@ -91,3 +91,4 @@ class KNN:
 
         self.get_k_neighbours(test_data, k)
         return self.get_class()
+    
