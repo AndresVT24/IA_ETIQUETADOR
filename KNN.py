@@ -68,9 +68,16 @@ class KNN:
         clases = []
 
         for fila in self.neighbors:
-            valores, cantidades = np.unique(fila, return_counts=True)
-            clase_mas_votada = valores[np.argmax(cantidades)]
-            clases.append(clase_mas_votada)
+            valores, idx, counts = np.unique(fila, return_index=True, return_counts=True)
+
+            orden = np.argsort(idx)
+            valores = valores[orden] 
+            idx = idx[orden]
+            counts = counts[orden] 
+            
+            max_count = np.max(counts)
+            pos = np.argmax(counts)
+            clases.append(valores[pos])
 
         return np.array(clases)
 
