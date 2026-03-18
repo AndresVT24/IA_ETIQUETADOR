@@ -4,7 +4,6 @@ import unittest
 from KNN import __authors__, __group__, KNN
 from utils import *
 
-
 class TestCases(unittest.TestCase):
 
     def setUp(self):
@@ -14,8 +13,8 @@ class TestCases(unittest.TestCase):
 
     def test_NIU(self):
         # DON'T FORGET TO WRITE YOUR NIU AND GROUPS
-        self.assertNotEqual(__authors__, "TO_BE_FILLED", msg="CHANGE IT TO YOUR NIU!")
-        self.assertNotEqual(__group__, "TO_BE_FILLED", msg="CHANGE YOUR GROUP NAME!")
+        self.assertNotEqual(__authors__, "Erik Andres Villca Tunari", msg="1745722")
+        self.assertNotEqual(__group__, "10", msg="10!")
         self.assertIsInstance(__authors__, list)
         for author in __authors__:
             self.assertIsInstance(author, str)
@@ -45,7 +44,6 @@ class TestCases(unittest.TestCase):
             knn = KNN(train_imgs, train_labels)
             preds = knn.predict(self.test_cases['test_input'][ix][0], self.test_cases['rnd_K'][ix])
             np.testing.assert_array_equal(preds, self.test_cases['get_class'][ix])
-
 
 if __name__ == "__main__":
     unittest.main()

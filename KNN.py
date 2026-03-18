@@ -28,12 +28,19 @@ class KNN:
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
         train_data = train_data.astype(float)
-        gray_data = utils.rgb2gray(train_data)
-        return self.train_data
+        self.train_data = train_data.reshape(train_data.shape[0], -1)
 
 
     def get_k_neighbours(self, test_data, k):
         """
+        Funció que pren com a entrada el conjunt de test que volem etiquetar
+        (test_data) i fa el següent:
+        1. Canvia les dimensions de les imatges de la mateixa manera que ho hem fet amb
+        el conjunt de entrenament.
+        2. Calcula la distància entre les mostres del test_data i les del train_data.
+        3. Guarda a la variable de classe self.neighbors les K etiquetes de les imatges més
+        pròximes per a cada mostra del test.
+
         given a test_data matrix calculates de k nearest neighbours at each point (row) of test_data on self.neighbors
         :param test_data: array that has to be shaped to a NxD matrix (N points in a D dimensional space)
         :param k: the number of neighbors to look at
@@ -44,7 +51,12 @@ class KNN:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        self.neighbors = np.random.randint(k, size=[test_data.shape[0], k])
+        test_data = test_data.astype(float)
+        test_data = test_data.reshape(test_data.shape[0], -1)
+
+        distancia = cdist(test_data, self.train_data)
+        cercanos =  np.argsort(distancia, axis=1)[:,:k]
+        self.neighbors = self.labels[cercanos]
 
     def get_class(self):
         """

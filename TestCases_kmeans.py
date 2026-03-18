@@ -12,9 +12,6 @@ class TestCases(unittest.TestCase):
         with open('./test/test_cases_kmeans.pkl', 'rb') as f:
             self.test_cases = pickle.load(f)
 
-
-
-
     def test_01_NIU(self):
         # DON'T FORGET TO WRITE YOUR NIU AND GROUPS
         self.assertNotEqual(__authors__, "TO_BE_FILLED", msg="CHANGE IT TO YOUR NIU!")
