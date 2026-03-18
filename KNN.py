@@ -1,5 +1,5 @@
-__authors__ = 'ERIK ANDRES VILLCA TUNARI'
-__group__ = 'TO_BE_FILLED'
+__authors__ = ['1691333']
+__group__ = '10'
 
 import numpy as np
 import math
@@ -59,16 +59,20 @@ class KNN:
         self.neighbors = self.labels[cercanos]
 
     def get_class(self):
+        print(self.neighbors)
         """
         Get the class by maximum voting
-        :return: 1 array of Nx1 elements. For each of the rows in self.neighbors gets the most voted value
-                (i.e. the class at which that row belongs)
+        :return: 1 array of Nx1 elements. For each of the rows in self.neighbors gets 
+                the most voted value (i.e. the class at which that row belongs)
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        return np.random.randint(10, size=self.neighbors.size), np.random.random(self.neighbors.size)
+        clases = []
+
+        for fila in self.neighbors:
+            valores, cantidades = np.unique(fila, return_counts=True)
+            clase_mas_votada = valores[np.argmax(cantidades)]
+            clases.append(clase_mas_votada)
+
+        return np.array(clases)
 
     def predict(self, test_data, k):
         """
