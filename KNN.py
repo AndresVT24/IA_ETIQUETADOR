@@ -59,7 +59,7 @@ class KNN:
         self.neighbors = self.labels[cercanos]
 
     def get_class(self):
-        print(self.neighbors)
+        #print(self.neighbors)
         """
         Get the class by maximum voting
         :return: 1 array of Nx1 elements. For each of the rows in self.neighbors gets 
@@ -89,5 +89,7 @@ class KNN:
         :return: the output form get_class a Nx1 vector with the predicted shape for each test image
         """
 
-        self.get_k_neighbours(test_data, k)
+        #self.get_k_neighbours(test_data, k)
         return self.get_class()
+    
+
