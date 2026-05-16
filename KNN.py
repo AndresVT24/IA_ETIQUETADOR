@@ -59,7 +59,6 @@ class KNN:
         self.neighbors = self.labels[cercanos]
 
     def get_class(self):
-        print(self.neighbors)
         """
         Get the class by maximum voting
         :return: 1 array of Nx1 elements. For each of the rows in self.neighbors gets 

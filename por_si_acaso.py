@@ -67,7 +67,7 @@ class KMeans:
         if 'tolerance' not in options:
             options['tolerance'] = 0
         if 'max_iter' not in options:
-            options['max_iter'] = 100
+            options['max_iter'] = np.inf
         if 'fitting' not in options:
             options['fitting'] = 'WCD'  # within class distance.
 
@@ -83,12 +83,33 @@ class KMeans:
         contador = 0
         i = 0
         if self.options['km_init'].lower() == 'first':
+    
+            distancia_minima = 30
 
             while contador < self.K and i < len(self.X):
                 punto = self.X[i]
 
                 repetido = False
+                
+                for c in centroids:
+                    if euclidean_dist(punto, c) < distancia_minima:
+                        repetido = True
 
+                if not repetido:
+                    centroids.append(punto)
+                    contador += 1
+
+                i += 1
+
+            # Si con distancia_minima no hemos llegado a K,
+            # rellenamos con puntos diferentes exactos.
+            i = 0
+            
+            while contador < self.K and i < len(self.X):
+                punto = self.X[i]
+
+                repetido = False
+                
                 for c in centroids:
                     if np.array_equal(punto, c):
                         repetido = True
@@ -116,13 +137,21 @@ class KMeans:
     """Funció que per a cada punt de la imatge X, assigna quin és el centroide més
     proper i ho guarda a la variable de la classe KMeans: self.labels"""
     def get_labels(self):
-    
-        distancias = distance(self.X, self.centroids)
-    
-        # Para cada punto, buscamos qué centroide tiene la distancia mínima.
-        # Cada fila es un punto y cada columna es un centroide.
-        self.labels = np.argmin(distancias, axis=1)
         
+        distancias = distance(self.X, self.centroids)
+        llista_minims = []
+        
+        for i, punto in enumerate(self.X):
+            minim = distancias[i,0]
+            centroide_minim = 0
+            for j, centroide in enumerate(self.centroids):
+                if distancias[i,j] < minim:
+                    minim = distancias[i,j]
+                    centroide_minim = j
+            llista_minims.append(centroide_minim)
+
+        self.labels = np.array(llista_minims) # guardo qué centroide tiene la distancia mínima.
+
     # calcula els nous centroides
     def get_centroids(self):
 
@@ -130,16 +159,14 @@ class KMeans:
         new_centroids = np.zeros_like(self.centroids)
         
         for k in range(self.K): # para cada cluster
-            
-            # seleccionamos directamente los puntos que tienen label k
-            puntos_cluster = self.X[self.labels == k]
-            
-            if len(puntos_cluster) > 0:
-                media = np.mean(puntos_cluster, axis=0)
-                new_centroids[k] = media
-            else:
-                # si un cluster se queda vacío, dejamos el centroide como estaba
-                new_centroids[k] = self.old_centroids[k]
+            puntos_cluster = []
+
+            for i in range(len(self.X)): # mira los labels que son iguales al cluster de la iteracion
+                if self.labels[i] == k:
+                    puntos_cluster.append(self.X[i])
+                    
+            media = np.mean(puntos_cluster, axis=0) # axis 0 calcula media por columnas
+            new_centroids[k] = media
         
         self.centroids = new_centroids
         
@@ -187,16 +214,18 @@ class KMeans:
         """
          returns the within class distance of the current clustering
         """
-    
-        # Para cada punto, cogemos el centroide que le corresponde según su label
-        centroides_de_cada_punto = self.centroids[self.labels]
-    
-        diferencias = self.X - centroides_de_cada_punto
-        cuadrados = diferencias ** 2
-        suma_por_punto = np.sum(cuadrados, axis=1)
-    
-        self.WCD = np.sum(suma_por_punto) / len(self.X)
-    
+        suma = 0
+
+        for i in range(len(self.X)):
+            label = self.labels[i]
+            punto = self.X[i]
+            centroide = self.centroids[label]
+
+            distancia = euclidean_dist(punto, centroide)
+            suma += distancia ** 2
+
+        self.WCD = suma / len(self.X)
+
         return self.WCD
 
     # Trobar la millor k
@@ -204,37 +233,42 @@ class KMeans:
         """
          sets the best k analysing the results up to 'max_K' clusters
         """
-    
+        llista_K = []
+        llista_WCD = []
         llindar = 20  # si la mejora es menor al 20%, paramos
-    
-        bestK = max_K
-        WCD_anterior = None
-    
-        k = 2
-        trobat = False
-    
-        while k <= max_K and not trobat:
-    
+
+        # Probamos diferentes valores de K
+        for k in range(2, max_K + 1): # va del 2 al max_k
             self.K = k
             self.num_iter = 0
-    
+            
             self.fit()
-            WCD_actual = self.withinClassDistance()
-    
-            if WCD_anterior is not None:
-    
-                percent_DEC = 100 * WCD_actual / WCD_anterior
-                millora = 100 - percent_DEC
-    
-                if millora < llindar:
-                    bestK = k - 1
-                    trobat = True
-    
-            WCD_anterior = WCD_actual
-            k += 1
-    
+            wcd = self.withinClassDistance()
+
+            llista_K.append(k)
+            llista_WCD.append(wcd)
+
+        # Si no encontramos una K mejor, nos quedamos con max_K
+        bestK = max_K
+
+        i = 1
+        trobat = False
+
+        while i < len(llista_WCD) and not trobat:
+            WCD_anterior = llista_WCD[i - 1]
+            WCD_actual = llista_WCD[i]
+
+            percent_DEC = 100 * WCD_actual / WCD_anterior
+            millora = 100 - percent_DEC
+
+            if millora < llindar: # si la mejora es mejor que el anterior por ejemplo un 11% mejor pues me quedo con esa k
+                bestK = llista_K[i - 1]
+                trobat = True
+
+            i += 1
+
         self.K = bestK
-    
+
         return self.K
 
 """ Funció que pren com a entrada la imatge X (N × D) i els centroides C (K × D),
