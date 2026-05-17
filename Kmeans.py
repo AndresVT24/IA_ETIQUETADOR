@@ -74,6 +74,23 @@ class KMeans:
         # If your methods need any other parameter you can add it to the options dictionary
         self.options = options
 
+    # MEJORA
+    def init_centroids(self, method="random"):
+        """
+        Inicialitza els centroides de KMeans segons el mètode indicat.
+
+        Args:
+            method: mètode d'inicialització.
+                - "random": inicialització aleatòria base.
+                - "first": agafar els primers K punts.
+                - "uniform": repartir centroides de manera uniforme.
+                - "custom": altra estratègia implementada pel grup.
+
+        Returns:
+            Centroides inicialitzats.
+        """
+        pass
+
     # Funció que inicialitza les variables de classe centroids K x D, i old_centroids K x D.
     def _init_centroids(self):
         
@@ -199,6 +216,24 @@ class KMeans:
     
         return self.WCD
 
+    # MEJORA
+    def find_bestK(self, max_K=10, method="wcd_threshold", threshold=0.2):
+        """
+        Troba el millor valor de K segons una heurística.
+
+        Args:
+            max_K: valor màxim de K a provar.
+            method: heurística utilitzada.
+                - "wcd_threshold": criteri base amb llindar.
+                - "elbow": detectar estabilització de la WCD.
+                - "relative_decrease": comparar decrements relatius.
+            threshold: llindar per decidir quan la millora deixa de ser significativa.
+
+        Returns:
+            Millor valor de K segons el criteri escollit.
+        """
+        pass
+
     # Trobar la millor k
     def find_bestK(self, max_K):
         """
@@ -237,43 +272,43 @@ class KMeans:
     
         return self.K
 
-""" Funció que pren com a entrada la imatge X (N × D) i els centroides C (K × D),
-    i calcula la distància euclidiana entre cada punt de la imatge amb cada centroide, i ho
-    retorna en forma d’una matriu de dimensió N × K """
-    
-def euclidean_dist(x, y):
-    x = np.array(x, dtype=float)
-    y = np.array(y, dtype=float)
+    """ Funció que pren com a entrada la imatge X (N × D) i els centroides C (K × D),
+        i calcula la distància euclidiana entre cada punt de la imatge amb cada centroide, i ho
+        retorna en forma d’una matriu de dimensió N × K """
+        
+    def euclidean_dist(x, y):
+        x = np.array(x, dtype=float)
+        y = np.array(y, dtype=float)
 
-    return np.sqrt(np.sum((x - y) ** 2))
+        return np.sqrt(np.sum((x - y) ** 2))
 
-def distance(X, C):
-    """
-    Calculates the distance between each pixel and each centroid
-    Args:
-        X (numpy array): PxD 1st set of data points (usually data points)
-        C (numpy array): KxD 2nd set of data points (usually cluster centroids points)
+    def distance(X, C):
+        """
+        Calculates the distance between each pixel and each centroid
+        Args:
+            X (numpy array): PxD 1st set of data points (usually data points)
+            C (numpy array): KxD 2nd set of data points (usually cluster centroids points)
 
-    Returns:
-        dist: PxK numpy array position ij is the distance between the
-        i-th point of the first set an the j-th point of the second set
-    """
-    
-    X = np.array(X, dtype=float)
-    C = np.array(C, dtype=float)
+        Returns:
+            dist: PxK numpy array position ij is the distance between the
+            i-th point of the first set an the j-th point of the second set
+        """
+        
+        X = np.array(X, dtype=float)
+        C = np.array(C, dtype=float)
 
-    dist = np.zeros((X.shape[0], C.shape[0]))
+        dist = np.zeros((X.shape[0], C.shape[0]))
 
-    for j, centroide in enumerate(C):
-        diferencias = X - centroide
-        cuadrados = diferencias ** 2
-        suma = np.sum(cuadrados, axis=1)
-        dist[:, j] = np.sqrt(suma)
+        for j, centroide in enumerate(C):
+            diferencias = X - centroide
+            cuadrados = diferencias ** 2
+            suma = np.sum(cuadrados, axis=1)
+            dist[:, j] = np.sqrt(suma)
 
-    return dist
+        return dist
 
 
-def get_colors(centroids):
+    def get_colors(centroids):
     """
     for each row of the numpy matrix 'centroids' returns the color label following the 11 basic colors as a LIST
     Args:

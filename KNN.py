@@ -30,7 +30,6 @@ class KNN:
         train_data = train_data.astype(float)
         self.train_data = train_data.reshape(train_data.shape[0], -1)
 
-
     def get_k_neighbours(self, test_data, k):
         """
         Funció que pren com a entrada el conjunt de test que volem etiquetar
@@ -90,3 +89,39 @@ class KNN:
 
         self.get_k_neighbours(test_data, k)
         return self.get_class()
+
+    # MEJORA
+    def extract_features(image, method="raw"):
+        """
+        Extreu característiques d'una imatge per fer servir amb KNN.
+
+        Args:
+            image: imatge d'entrada.
+            method: tipus de representació.
+                - "raw": píxels originals.
+                - "resized": imatge redimensionada.
+                - "mean_variance": mitjana i variància.
+                - "upper_lower": característiques separant part superior i inferior.
+
+        Returns:
+            Vector de característiques de la imatge.
+        """
+        pass
+    
+    # MEJORA
+    def compute_distance(x1, x2, method="euclidean"):
+        """
+        Calcula la distància entre dos vectors de característiques.
+
+        Args:
+            x1: primer vector.
+            x2: segon vector.
+            method: tipus de distància.
+                - "euclidean"
+                - "manhattan"
+                - "cosine"
+
+        Returns:
+            Distància entre x1 i x2.
+        """
+        pass
